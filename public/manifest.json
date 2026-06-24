@@ -1,0 +1,17 @@
+{
+  "name": "Voice Note",
+  "short_name": "Voice Note",
+  "description": "Dictate a quick note and email it to yourself.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#faf7f0",
+  "theme_color": "#faf7f0",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}
