@@ -1,9 +1,24 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 180 180">
-  <rect width="180" height="180" rx="40" fill="#faf7f0"/>
-  <g transform="translate(90 86)" fill="none" stroke="#e07850" stroke-width="9" stroke-linecap="round">
-    <rect x="-18" y="-46" width="36" height="64" rx="18" fill="#e07850" stroke="none"/>
-    <path d="M-34 -6 a34 34 0 0 0 68 0"/>
-    <path d="M0 28 v22"/>
-    <path d="M-22 50 h44"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="lamp" cx="50%" cy="18%" r="80%">
+      <stop offset="0" stop-color="#3a2a1c"/>
+      <stop offset="1" stop-color="#120f0d"/>
+    </radialGradient>
+    <radialGradient id="label" cx="38%" cy="32%" r="70%">
+      <stop offset="0" stop-color="#ffd08a"/>
+      <stop offset="1" stop-color="#f0a94b"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#lamp)"/>
+  <g transform="translate(256 262)">
+    <circle r="178" fill="#0c0a09"/>
+    <g fill="none" stroke="#221c17" stroke-width="3">
+      <circle r="164"/><circle r="150"/><circle r="136"/><circle r="122"/><circle r="108"/><circle r="94"/><circle r="80"/>
+    </g>
+    <path d="M -120 -110 A 164 164 0 0 1 60 -152" fill="none" stroke="#f3e9d8" stroke-opacity=".12" stroke-width="10" stroke-linecap="round"/>
+    <circle r="62" fill="url(#label)"/>
+    <circle r="7" fill="#120f0d"/>
+    <!-- a lyric line / pencil stroke sweeping across the record -->
+    <path d="M -150 118 C -80 70, -30 150, 30 96 S 130 40, 170 64" fill="none" stroke="#7cc4ad" stroke-width="16" stroke-linecap="round"/>
   </g>
 </svg>

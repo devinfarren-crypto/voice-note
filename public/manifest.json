@@ -1,17 +1,14 @@
 {
-  "name": "Voice Note",
-  "short_name": "Voice Note",
-  "description": "Dictate a quick note and email it to yourself.",
+  "name": "Catch — lyrics & melodies",
+  "short_name": "Catch",
+  "description": "Catch lyrics and melodies before they get away.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#faf7f0",
-  "theme_color": "#faf7f0",
+  "background_color": "#120f0d",
+  "theme_color": "#120f0d",
   "icons": [
-    {
-      "src": "/icon.svg",
-      "type": "image/svg+xml",
-      "sizes": "any",
-      "purpose": "any maskable"
-    }
+    { "src": "/icon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
+    { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "any maskable" },
+    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "180x180" }
   ]
 }

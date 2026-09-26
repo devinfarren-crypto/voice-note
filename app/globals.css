@@ -1,3 +1,44 @@
+/* Catch — a late-night backyard-studio look: warm dark wood, one tungsten
+   lamp, a cream lyric sheet. The accent swaps with the mode: amber for
+   lyrics, sage for melodies. */
+
+:root {
+  --bg: #120f0d;
+  --bg-2: #1b1714;
+  --surface: #221c18;
+  --surface-2: #2b241f;
+  --line: rgba(243, 233, 216, 0.09);
+  --line-strong: rgba(243, 233, 216, 0.16);
+  --cream: #f3e9d8;
+  --paper: #f6eedf;
+  --paper-ink: #2a211b;
+  --paper-rule: rgba(120, 88, 60, 0.16);
+  --muted: #a39584;
+  --faint: #6f6457;
+  --amber: #f0a94b;
+  --sage: #7cc4ad;
+  --rec: #e8603f;
+  --danger: #e27a62;
+
+  --accent: var(--amber);
+  --accent-soft: rgba(240, 169, 75, 0.14);
+  --accent-glow: rgba(240, 169, 75, 0.35);
+
+  --serif: "Fraunces", "Iowan Old Style", "Palatino", Georgia, serif;
+  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  --hand: "Caveat", "Bradley Hand", cursive;
+
+  --radius: 20px;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-mode="melody"] {
+  --accent: var(--sage);
+  --accent-soft: rgba(124, 196, 173, 0.14);
+  --accent-glow: rgba(124, 196, 173, 0.35);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -6,10 +47,1066 @@ html,
 body {
   margin: 0;
   padding: 0;
-  background: #faf7f0;
+  background: var(--bg);
+  color: var(--cream);
   -webkit-text-size-adjust: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
 }
 
-/* Avoid iOS auto-zoom on focus by keeping inputs at >=16px (handled inline). */
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ---------- Shell ---------- */
+
+.app {
+  position: relative;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: max(18px, env(safe-area-inset-top)) 18px calc(92px + env(safe-area-inset-bottom));
+  isolation: isolate;
+  overflow-x: hidden;
+}
+
+/* The lamp: a warm pool of light from above that tints with the mode. */
+.app::before {
+  content: "";
+  position: fixed;
+  inset: -20vh -30vw auto;
+  height: 80vh;
+  background: radial-gradient(ellipse at 50% 20%, var(--accent-glow), transparent 62%);
+  opacity: 0.38;
+  z-index: -2;
+  transition: background 0.6s var(--ease);
+  pointer-events: none;
+}
+
+/* Film grain + faint vertical wood grain. */
+.app::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 .93 0 0 0 0 .85 0 0 0 .06 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 235, 210, 0.012) 0 2px,
+      transparent 2px 9px,
+      rgba(0, 0, 0, 0.05) 9px 10px,
+      transparent 10px 23px
+    );
+}
+
+.column {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* ---------- Header ---------- */
+
+.brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 2px 18px;
+}
+
+.wordmark {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.wordmark h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+  font-variation-settings: "SOFT" 100, "WONK" 1;
+  line-height: 1;
+}
+
+.wordmark h1 em {
+  font-style: italic;
+  color: var(--accent);
+  transition: color 0.4s var(--ease);
+}
+
+.wordmark span {
+  font-family: var(--hand);
+  font-size: 20px;
+  color: var(--muted);
+  transform: rotate(-3deg);
+  display: inline-block;
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--muted);
+}
+
+/* ---------- Mode switch ---------- */
+
+.mode-switch {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 5px;
+  border-radius: 999px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.4);
+  margin-bottom: 18px;
+}
+
+.mode-switch .pill {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
+  width: calc(50% - 5px);
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(0, 0, 0, 0.2);
+  transition: transform 0.45s var(--ease);
+}
+
+[data-mode="melody"] .mode-switch .pill {
+  transform: translateX(100%);
+}
+
+.mode-switch button {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 46px;
+  border: none;
+  background: none;
+  color: var(--faint);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  transition: color 0.3s;
+}
+
+.mode-switch button[aria-checked="true"] {
+  color: var(--cream);
+}
+
+.mode-switch button[aria-checked="true"] svg {
+  color: var(--accent);
+}
+
+/* ---------- Lyric sheet ---------- */
+
+.sheet {
+  position: relative;
+  flex: 1;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius);
+  background: var(--paper);
+  color: var(--paper-ink);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset, 0 24px 60px rgba(0, 0, 0, 0.55),
+    0 2px 6px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  animation: rise 0.5s var(--ease) both;
+}
+
+/* Red margin line like a legal pad. */
+.sheet::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 38px;
+  width: 1px;
+  background: rgba(214, 96, 70, 0.35);
+  pointer-events: none;
+}
+
+.sheet-title {
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 18px 20px 4px 52px;
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--paper-ink);
+  letter-spacing: -0.01em;
+}
+
+.sheet-title::placeholder {
+  color: rgba(42, 33, 27, 0.32);
+  font-style: italic;
+}
+
+.sheet-body {
+  position: relative;
+  flex: 1;
+  display: flex;
+}
+
+.sheet textarea {
+  flex: 1;
+  width: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 33px,
+      var(--paper-rule) 33px 34px
+    );
+  background-attachment: local;
+  padding: 7px 20px 20px 52px;
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 34px;
+  color: var(--paper-ink);
+}
+
+.sheet textarea::placeholder {
+  color: rgba(42, 33, 27, 0.35);
+  font-style: italic;
+}
+
+.interim {
+  position: absolute;
+  left: 52px;
+  right: 20px;
+  bottom: 14px;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 17px;
+  color: rgba(42, 33, 27, 0.5);
+  pointer-events: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---------- Melody deck ---------- */
+
+.deck {
+  position: relative;
+  flex: 1;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, #1f1a16, #171310);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  animation: rise 0.5s var(--ease) both;
+}
+
+.deck-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 18px 0;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  font-weight: 600;
+}
+
+.deck-top .live {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--rec);
+}
+
+.deck-top .live::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rec);
+  box-shadow: 0 0 10px var(--rec);
+  animation: blink 1.2s ease-in-out infinite;
+}
+
+.note-readout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 0;
+}
+
+.note-name {
+  font-family: var(--serif);
+  font-size: 88px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--cream);
+  font-variation-settings: "SOFT" 100;
+  min-height: 88px;
+  transition: color 0.2s;
+}
+
+.note-name sub {
+  font-size: 0.34em;
+  color: var(--muted);
+  vertical-align: baseline;
+  margin-left: 2px;
+}
+
+.note-name.idle {
+  color: var(--faint);
+  opacity: 0.5;
+}
+
+.tuner {
+  position: relative;
+  width: 180px;
+  height: 18px;
+}
+
+.tuner::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--line-strong) 0 1px, transparent 1px 18px);
+  box-shadow: 0 -4px 0 -3px var(--line-strong);
+}
+
+.tuner::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line-strong);
+}
+
+.tuner i {
+  position: absolute;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  margin-left: -1.5px;
+  border-radius: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent-glow);
+  transition: left 0.12s linear, opacity 0.2s;
+}
+
+.deck-hint {
+  font-size: 13px;
+  color: var(--faint);
+  text-align: center;
+  padding: 0 24px;
+}
+
+.wave {
+  display: block;
+  width: 100%;
+  height: 84px;
+}
+
+.timer {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+  color: var(--cream);
+  letter-spacing: 0.04em;
+}
+
+/* Review state once a take is captured. */
+.review {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px;
+  flex: 1;
+  justify-content: center;
+}
+
+.field {
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: rgba(0, 0, 0, 0.22);
+  padding: 13px 15px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.field:focus {
+  border-color: var(--accent);
+}
+
+.field::placeholder {
+  color: var(--faint);
+}
+
+.field.title {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+textarea.field {
+  resize: none;
+  min-height: 70px;
+  line-height: 1.45;
+}
+
+/* ---------- Player ---------- */
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px 10px 10px;
+  border-radius: 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--line);
+}
+
+.player .play {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #15110e;
+  box-shadow: 0 4px 14px var(--accent-glow);
+}
+
+.player .track {
+  position: relative;
+  flex: 1;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  cursor: pointer;
+  touch-action: none;
+}
+
+.player .track span {
+  flex: 1;
+  border-radius: 2px;
+  background: var(--line-strong);
+  transition: background 0.15s;
+}
+
+.player .track span.on {
+  background: var(--accent);
+}
+
+.player .time {
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  min-width: 34px;
+  text-align: right;
+}
+
+/* ---------- Transport (big record button + actions) ---------- */
+
+.transport {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 22px 4px 4px;
+}
+
+.transport .side {
+  flex: 1;
+  display: flex;
+}
+
+.transport .side.right {
+  justify-content: flex-end;
+}
+
+/* The record button is a little vinyl: grooves, a label in the accent colour,
+   and it spins while it's listening. */
+.rec {
+  position: relative;
+  flex: none;
+  width: 104px;
+  height: 104px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background: radial-gradient(circle, #1c1815 0 18%, transparent 18.5%),
+    repeating-radial-gradient(circle, #0f0c0a 0 2px, #1d1814 2px 4px);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 14px 34px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 6px #0c0a09;
+  transition: transform 0.2s var(--ease), box-shadow 0.4s var(--ease);
+}
+
+.rec::before {
+  /* Sheen that stays put while the disc spins underneath. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 30deg,
+    transparent 0 40deg,
+    rgba(255, 240, 220, 0.1) 60deg,
+    transparent 80deg 220deg,
+    rgba(255, 240, 220, 0.07) 240deg,
+    transparent 260deg
+  );
+  pointer-events: none;
+  z-index: 2;
+}
+
+.rec .disc {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.rec .label {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #15110e 0 3px, transparent 3.5px),
+    radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--accent) 80%, white), var(--accent));
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.25);
+  transition: background 0.4s;
+}
+
+.rec .glyph {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 3;
+  color: #15110e;
+  pointer-events: none;
+}
+
+.rec:active {
+  transform: scale(0.96);
+}
+
+.rec.on {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 14px 34px rgba(0, 0, 0, 0.6),
+    inset 0 0 0 6px #0c0a09, 0 0 0 10px var(--accent-soft), 0 0 50px var(--accent-glow);
+  animation: halo 1.8s ease-in-out infinite;
+}
+
+.rec.on .disc {
+  animation: spin 1.8s linear infinite;
+}
+
+.rec.on .label {
+  background: radial-gradient(circle, #15110e 0 3px, transparent 3.5px),
+    radial-gradient(circle at 35% 30%, #ff8d6c, var(--rec));
+}
+
+.rec:disabled {
+  opacity: 0.4;
+}
+
+.rec-caption {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 10px;
+  min-height: 18px;
+  letter-spacing: 0.01em;
+}
+
+.rec-caption.on {
+  color: var(--rec);
+}
+
+.chip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cream);
+  transition: background 0.2s, opacity 0.2s, border-color 0.2s;
+  white-space: nowrap;
+}
+
+.chip-btn:disabled {
+  opacity: 0.35;
+}
+
+.chip-btn.primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: #15110e;
+  box-shadow: 0 6px 18px var(--accent-glow);
+}
+
+.chip-btn.primary:disabled {
+  box-shadow: none;
+}
+
+.chip-btn.ghost {
+  border-color: transparent;
+  color: var(--muted);
+  background: none;
+}
+
+.chip-btn.danger {
+  color: var(--danger);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.actions.spread > * {
+  flex: 1;
+  justify-content: center;
+}
+
+.notice {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.notice.error {
+  color: var(--danger);
+}
+
+.notice.ok {
+  color: var(--accent);
+}
+
+/* ---------- Library ---------- */
+
+.lib-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 2px 2px 14px;
+}
+
+.lib-head h2 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.lib-head span {
+  font-size: 13px;
+  color: var(--faint);
+}
+
+.filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filters button {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: none;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.filters button[aria-pressed="true"] {
+  background: var(--cream);
+  color: #15110e;
+  border-color: transparent;
+}
+
+.takes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.take {
+  border-radius: 18px;
+  background: linear-gradient(180deg, var(--surface), var(--bg-2));
+  border: 1px solid var(--line);
+  overflow: hidden;
+  animation: rise 0.4s var(--ease) both;
+}
+
+.take[data-kind="lyrics"] {
+  --accent: var(--amber);
+  --accent-soft: rgba(240, 169, 75, 0.14);
+  --accent-glow: rgba(240, 169, 75, 0.35);
+}
+
+.take[data-kind="melody"] {
+  --accent: var(--sage);
+  --accent-soft: rgba(124, 196, 173, 0.14);
+  --accent-glow: rgba(124, 196, 173, 0.35);
+}
+
+.take-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+}
+
+.take-badge {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: var(--accent-soft, rgba(255, 255, 255, 0.05));
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+}
+
+.take-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.take-title {
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.take-sub {
+  font-size: 12.5px;
+  color: var(--faint);
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.take-body {
+  padding: 0 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.take-lyrics {
+  margin: 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  font-family: var(--serif);
+  font-size: 16.5px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.take-note {
+  margin: 0;
+  font-family: var(--hand);
+  font-size: 20px;
+  color: var(--muted);
+  white-space: pre-wrap;
+}
+
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 8px;
+  padding: 50px 20px;
+  color: var(--faint);
+}
+
+.empty p {
+  margin: 0;
+}
+
+.empty .big {
+  font-family: var(--hand);
+  font-size: 30px;
+  color: var(--muted);
+}
+
+/* ---------- Tab bar ---------- */
+
+.tabbar {
+  position: fixed;
+  left: 50%;
+  bottom: max(14px, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(27, 23, 20, 0.78);
+  border: 1px solid var(--line-strong);
+  backdrop-filter: blur(18px) saturate(1.4);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+  z-index: 10;
+}
+
+.tabbar button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 600;
+  transition: background 0.25s, color 0.25s;
+}
+
+.tabbar button[aria-selected="true"] {
+  background: var(--cream);
+  color: #15110e;
+}
+
+.tabbar .count {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  display: inline-grid;
+  place-items: center;
+  font-size: 11px;
+  background: var(--accent);
+  color: #15110e;
+}
+
+/* ---------- Birthday card ---------- */
+
+.gift {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(8, 6, 5, 0.72);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  animation: fade 0.5s ease both;
+}
+
+.gift-card {
+  position: relative;
+  width: 100%;
+  max-width: 380px;
+  padding: 34px 28px 26px;
+  border-radius: 24px;
+  background: var(--paper);
+  color: var(--paper-ink);
+  text-align: center;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.7);
+  animation: rise 0.7s var(--ease) 0.1s both;
+  transform-origin: bottom center;
+}
+
+.gift-card::before {
+  /* A strip of masking tape holding the card up. */
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  width: 110px;
+  height: 26px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: rgba(240, 222, 180, 0.85);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.gift-card .eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a1603a;
+  font-weight: 700;
+}
+
+.gift-card h2 {
+  margin: 10px 0 12px;
+  font-family: var(--serif);
+  font-size: 34px;
+  line-height: 1.05;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.gift-card p {
+  margin: 0 0 14px;
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.5;
+  color: #54463b;
+}
+
+.gift-card .sig {
+  font-family: var(--hand);
+  font-size: 28px;
+  color: var(--paper-ink);
+  margin: 4px 0 22px;
+}
+
+.gift-card button {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background: var(--paper-ink);
+  color: var(--paper);
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* ---------- Motion ---------- */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes halo {
+  50% {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 14px 34px rgba(0, 0, 0, 0.6),
+      inset 0 0 0 6px #0c0a09, 0 0 0 18px var(--accent-soft), 0 0 70px var(--accent-glow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

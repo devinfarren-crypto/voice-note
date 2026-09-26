@@ -2,17 +2,22 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { Resend } from "resend";
 
-// Voice-note delivery. Takes the dictated text plus client-formatted local
-// time/date, asks Claude for a two-word summary, and emails the note to the
-// configured recipient. The recipient is fixed server-side (env, defaulting to
-// the owner) — this endpoint is unauthenticated by design, so the worst an
-// abuser can do is spam that one inbox, never an arbitrary address.
+// Song-idea delivery. Takes a lyric or melody take plus client-formatted local
+// time/date, asks Claude for a two-word summary of any lyric text, and emails
+// it (with the melody audio attached) to the configured recipient. The
+// recipient is fixed server-side (env, defaulting to the owner) — this endpoint
+// is unauthenticated by design, so the worst an abuser can do is spam that one
+// inbox, never an arbitrary address.
 
 const RECIPIENT = process.env.NOTE_RECIPIENT ?? "devinfarren@gmail.com";
 const MAX_NOTE_CHARS = 8000;
+// Vercel rejects bodies over 4.5 MB, so real audio never gets near this.
+const MAX_AUDIO_BASE64_CHARS = 4_400_000;
 const SUMMARY_MODEL = "claude-haiku-4-5";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+type Kind = "lyrics" | "melody";
 
 // Title-case + strip anything that isn't a letter/number/space so a stray
 // model flourish can't land in the subject line.
@@ -27,45 +32,63 @@ function toTwoWords(raw: string): string {
   return words.join(" ");
 }
 
-// Fallback when the model is unavailable: first two meaningful words of the note.
-function fallbackSummary(text: string): string {
-  const two = toTwoWords(text);
-  return two || "Voice Note";
+function fallbackSummary(text: string, kind: Kind): string {
+  return toTwoWords(text) || (kind === "melody" ? "Melody Idea" : "Lyric Idea");
 }
 
-async function summarize(text: string): Promise<string> {
-  if (!process.env.ANTHROPIC_API_KEY) return fallbackSummary(text);
+async function summarize(text: string, kind: Kind): Promise<string> {
+  if (!text || !process.env.ANTHROPIC_API_KEY) return fallbackSummary(text, kind);
   try {
     const response = await anthropic.messages.create({
       model: SUMMARY_MODEL,
       max_tokens: 16,
       system:
-        "You label voice notes. Reply with EXACTLY two words that summarize the note's topic, in Title Case, no punctuation, no quotes, nothing else.",
+        "You label a songwriter's rough song ideas. Reply with EXACTLY two evocative words capturing the idea's image or theme, in Title Case, no punctuation, no quotes, nothing else.",
       messages: [{ role: "user", content: text.slice(0, 4000) }],
     });
     const block = response.content.find((b) => b.type === "text");
     const candidate = block && block.type === "text" ? toTwoWords(block.text) : "";
-    return candidate || fallbackSummary(text);
+    return candidate || fallbackSummary(text, kind);
   } catch (err) {
     console.error("[notes/send] summary failed, using fallback:", err);
-    return fallbackSummary(text);
+    return fallbackSummary(text, kind);
   }
 }
 
+function str(v: unknown, max: number): string {
+  return typeof v === "string" ? v.trim().slice(0, max) : "";
+}
+
 export async function POST(req: NextRequest) {
-  let body: { text?: unknown; timeLabel?: unknown; dateLabel?: unknown };
+  let body: Record<string, unknown>;
   try {
     body = await req.json();
   } catch {
     return NextResponse.json({ ok: false, error: "Invalid request." }, { status: 400 });
   }
 
+  const kind: Kind = body.kind === "melody" ? "melody" : "lyrics";
   const text = typeof body.text === "string" ? body.text.trim() : "";
-  if (!text) {
-    return NextResponse.json({ ok: false, error: "Note is empty." }, { status: 400 });
+  const title = str(body.title, 80);
+  const keyHint = str(body.keyHint, 12);
+
+  const rawAudio = body.audio as { base64?: unknown; mime?: unknown; filename?: unknown } | undefined;
+  const audioBase64 = typeof rawAudio?.base64 === "string" ? rawAudio.base64 : "";
+
+  if (kind === "lyrics" && !text) {
+    return NextResponse.json({ ok: false, error: "Lyrics are empty." }, { status: 400 });
+  }
+  if (kind === "melody" && !audioBase64) {
+    return NextResponse.json({ ok: false, error: "No recording attached." }, { status: 400 });
   }
   if (text.length > MAX_NOTE_CHARS) {
-    return NextResponse.json({ ok: false, error: "Note is too long." }, { status: 413 });
+    return NextResponse.json({ ok: false, error: "That's too long to send." }, { status: 413 });
+  }
+  if (audioBase64.length > MAX_AUDIO_BASE64_CHARS) {
+    return NextResponse.json(
+      { ok: false, error: "That take is too long to email — use Share instead." },
+      { status: 413 }
+    );
   }
 
   const apiKey = process.env.RESEND_API_KEY;
@@ -80,16 +103,26 @@ export async function POST(req: NextRequest) {
   // Prefer the client's local time/date (server runs in UTC); fall back to now.
   const now = new Date();
   const timeLabel =
-    typeof body.timeLabel === "string" && body.timeLabel.trim()
-      ? body.timeLabel.trim().slice(0, 40)
-      : now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    str(body.timeLabel, 40) ||
+    now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
   const dateLabel =
-    typeof body.dateLabel === "string" && body.dateLabel.trim()
-      ? body.dateLabel.trim().slice(0, 40)
-      : now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    str(body.dateLabel, 40) ||
+    now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 
-  const twoWords = await summarize(text);
-  const subject = `${timeLabel} · ${dateLabel} · ${twoWords}`;
+  // A named take keeps its name; untitled ones get a two-word summary.
+  const label = title.replace(/\s+/g, " ") || (await summarize(text, kind));
+  const kindLabel = kind === "melody" ? "Melody" : "Lyrics";
+  const subject = `${kindLabel} · ${timeLabel} · ${dateLabel} · ${label}`;
+
+  const lines = [
+    title ? title : null,
+    kind === "melody" && keyHint ? `Hovering around ${keyHint}` : null,
+    text || null,
+  ].filter(Boolean);
+  const emailText = lines.length ? lines.join("\n\n") : "Melody attached.";
+
+  const mime = str(rawAudio?.mime, 60) || "audio/mp4";
+  const filename = str(rawAudio?.filename, 100).replace(/[^\w.\- ]+/g, "") || "melody.m4a";
 
   try {
     const resend = new Resend(apiKey);
@@ -97,14 +130,14 @@ export async function POST(req: NextRequest) {
       from,
       to: RECIPIENT,
       subject,
-      text,
+      text: emailText,
+      attachments: audioBase64
+        ? [{ filename, content: audioBase64, contentType: mime }]
+        : undefined,
     });
     if (error) {
       console.error("[notes/send] resend error:", error);
-      return NextResponse.json(
-        { ok: false, error: "Couldn't send the email." },
-        { status: 502 }
-      );
+      return NextResponse.json({ ok: false, error: "Couldn't send the email." }, { status: 502 });
     }
     return NextResponse.json({ ok: true, subject });
   } catch (err) {
