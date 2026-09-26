@@ -239,7 +239,7 @@ button:disabled {
 .sheet {
   position: relative;
   flex: 1;
-  min-height: 300px;
+  min-height: 200px;
   display: flex;
   flex-direction: column;
   border-radius: var(--radius);
@@ -331,7 +331,7 @@ button:disabled {
 .deck {
   position: relative;
   flex: 1;
-  min-height: 300px;
+  min-height: 250px;
   display: flex;
   flex-direction: column;
   border-radius: var(--radius);
@@ -1089,6 +1089,29 @@ textarea.field {
   50% {
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 14px 34px rgba(0, 0, 0, 0.6),
       inset 0 0 0 6px #0c0a09, 0 0 0 18px var(--accent-soft), 0 0 70px var(--accent-glow);
+  }
+}
+
+@media (max-height: 700px) {
+  .brand {
+    padding-bottom: 12px;
+  }
+  .mode-switch {
+    margin-bottom: 12px;
+  }
+  .transport {
+    padding-top: 14px;
+  }
+  .rec {
+    width: 88px;
+    height: 88px;
+  }
+  .note-name {
+    font-size: 68px;
+    min-height: 68px;
+  }
+  .wave {
+    height: 64px;
   }
 }
 
