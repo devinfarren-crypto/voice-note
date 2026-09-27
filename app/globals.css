@@ -1132,6 +1132,46 @@ textarea.field {
   font-size: 16px;
 }
 
+/* ---------- His buttons, his handwriting ----------
+   Anything Justin presses is labelled in his pencil scrawl. The birthday
+   card (from Devin) keeps its own neat type. */
+
+.mode-switch button,
+.chip-btn,
+.tabbar button,
+.filters button {
+  font-family: var(--pencil);
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.mode-switch button {
+  font-size: 25px;
+}
+
+.chip-btn {
+  font-size: 22px;
+}
+
+.tabbar button {
+  font-size: 24px;
+}
+
+.filters button {
+  font-size: 20px;
+}
+
+/* Numbers stay legible. */
+.tabbar .count {
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.gift-card button {
+  font-family: var(--sans);
+}
+
 /* ---------- Motion ---------- */
 
 @keyframes rise {
