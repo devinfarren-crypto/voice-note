@@ -38,7 +38,7 @@ export default function BirthdayCard({ forceOpen, onClose }: { forceOpen: boolea
         <figure className="polaroid">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="justin-truck.jpg" alt={`${TO} standing in the bed of his yellow Toyota pickup`} />
-          <figcaption>the man, the truck</figcaption>
+          <figcaption>all things born in 82’</figcaption>
         </figure>
         <div className="eyebrow">Happy birthday</div>
         <h2 id="gift-title">For the ones that show up uninvited, {TO}.</h2>
