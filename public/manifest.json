@@ -4,8 +4,8 @@
   "description": "Catch lyrics and melodies before they get away.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#120f0d",
-  "theme_color": "#120f0d",
+  "background_color": "#0b0a09",
+  "theme_color": "#0b0a09",
   "icons": [
     { "src": "/icon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
     { "src": "/icon-512.png", "type": "image/png", "sizes": "512x512", "purpose": "any maskable" },

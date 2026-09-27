@@ -103,9 +103,3 @@ export const StackIcon = ({ size = 18 }: P) => (
   </svg>
 );
 
-export const GiftIcon = ({ size = 18 }: P) => (
-  <svg {...base(size)}>
-    <rect x="3" y="9" width="18" height="12" rx="1.5" />
-    <path d="M3 13h18M12 9v12M12 9c-2-4-6-4-6-1.5S12 9 12 9zm0 0c2-4 6-4 6-1.5S12 9 12 9z" />
-  </svg>
-);

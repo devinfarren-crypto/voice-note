@@ -11,7 +11,7 @@ import BirthdayCard from "./BirthdayCard";
 import Library from "./Library";
 import LyricsCapture from "./LyricsCapture";
 import MelodyCapture from "./MelodyCapture";
-import { GiftIcon, MicIcon, NoteIcon, QuillIcon, StackIcon } from "./icons";
+import { MicIcon, NoteIcon, QuillIcon, StackIcon } from "./icons";
 
 type Tab = "capture" | "takes";
 const MODE_KEY = "catch:mode";
@@ -70,18 +70,17 @@ export default function CatchApp() {
       <div className="column">
         <header className="brand">
           <div className="wordmark">
-            <h1>
-              Catch<em>.</em>
-            </h1>
+            <h1>Catch</h1>
             <span>lyrics &amp; melodies</span>
           </div>
           <button
             type="button"
-            className="icon-btn"
+            className="avatar-btn"
             onClick={() => setShowCard(true)}
             aria-label="Open birthday card"
           >
-            <GiftIcon />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="justin-sketch.jpg" alt="" />
           </button>
         </header>
 

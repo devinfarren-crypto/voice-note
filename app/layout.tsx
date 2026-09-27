@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#120f0d",
+  themeColor: "#0b0a09",
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
@@ -37,7 +37,7 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Caveat:wght@500&family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,400..700,0..100,0..1;1,9..144,400..700,0..100,0..1&family=Inter:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Fondamento:ital@0;1&family=Rubik:wght@400;500;600&family=Sacramento&display=swap"
         />
       </head>
       <body>{children}</body>

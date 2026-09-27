@@ -62,6 +62,8 @@ export default function Library({
 
       {!loading && shown.length === 0 ? (
         <div className="empty">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img className="portrait" src="justin-sketch.jpg" alt="" />
           <p className="big">Nothing caught yet.</p>
           <p>Every lyric you save and melody you record lands here.</p>
         </div>

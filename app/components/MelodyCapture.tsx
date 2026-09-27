@@ -75,7 +75,7 @@ export default function MelodyCapture({
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.clearRect(0, 0, w, h);
 
-    const accent = getComputedStyle(canvas).getPropertyValue("--accent").trim() || "#7cc4ad";
+    const accent = getComputedStyle(canvas).getPropertyValue("--accent").trim() || "#7fa2d8";
     const barW = 3;
     const gap = 2;
     const count = Math.floor(w / (barW + gap));

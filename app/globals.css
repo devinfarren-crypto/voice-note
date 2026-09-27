@@ -1,42 +1,44 @@
-/* Catch — a late-night backyard-studio look: warm dark wood, one tungsten
-   lamp, a cream lyric sheet. The accent swaps with the mode: amber for
-   lyrics, sage for melodies. */
+/* Catch — styled after justinfarren.com: a black stage with warm bokeh
+   lights, the tan hand-lettered name, a storybook serif on off-white paper.
+   The accent swaps with the mode: sawdust tan for lyrics, overall-denim blue
+   for melodies, and the red of his cap for recording. */
 
 :root {
-  --bg: #120f0d;
-  --bg-2: #1b1714;
-  --surface: #221c18;
-  --surface-2: #2b241f;
+  --bg: #0b0a09;
+  --bg-2: #151311;
+  --surface: #1c1916;
+  --surface-2: #26221e;
   --line: rgba(243, 233, 216, 0.09);
   --line-strong: rgba(243, 233, 216, 0.16);
-  --cream: #f3e9d8;
-  --paper: #f6eedf;
-  --paper-ink: #2a211b;
-  --paper-rule: rgba(120, 88, 60, 0.16);
-  --muted: #a39584;
-  --faint: #6f6457;
-  --amber: #f0a94b;
-  --sage: #7cc4ad;
-  --rec: #e8603f;
-  --danger: #e27a62;
+  --cream: #f4efe7;
+  --paper: #f7f4ef;
+  --paper-ink: #4a3124;
+  --paper-rule: rgba(110, 76, 52, 0.15);
+  --muted: #a89a8a;
+  --faint: #6e6358;
+  --tan: #d4a373;
+  --denim: #7fa2d8;
+  --bokeh: #d9d27c;
+  --rec: #c8424f;
+  --danger: #e0707a;
 
-  --accent: var(--amber);
-  --accent-soft: rgba(240, 169, 75, 0.14);
-  --accent-glow: rgba(240, 169, 75, 0.35);
+  --accent: var(--tan);
+  --accent-soft: rgba(212, 163, 115, 0.14);
+  --accent-glow: rgba(212, 163, 115, 0.35);
 
-  --serif: "Fraunces", "Iowan Old Style", "Palatino", Georgia, serif;
-  --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+  --serif: "Fondamento", "Iowan Old Style", "Palatino", Georgia, serif;
+  --sans: "Rubik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
-  --hand: "Caveat", "Bradley Hand", cursive;
+  --script: "Sacramento", "Snell Roundhand", "Apple Chancery", cursive;
 
   --radius: 20px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 [data-mode="melody"] {
-  --accent: var(--sage);
-  --accent-soft: rgba(124, 196, 173, 0.14);
-  --accent-glow: rgba(124, 196, 173, 0.35);
+  --accent: var(--denim);
+  --accent-soft: rgba(127, 162, 216, 0.14);
+  --accent-glow: rgba(127, 162, 216, 0.35);
 }
 
 * {
@@ -89,17 +91,25 @@ button:disabled {
   overflow-x: hidden;
 }
 
-/* The lamp: a warm pool of light from above that tints with the mode. */
+/* Stage lights: soft out-of-focus bokeh like the photo on his site, plus a
+   spotlight from above that tints with the mode. */
 .app::before {
   content: "";
   position: fixed;
-  inset: -20vh -30vw auto;
-  height: 80vh;
-  background: radial-gradient(ellipse at 50% 20%, var(--accent-glow), transparent 62%);
-  opacity: 0.38;
+  inset: 0;
   z-index: -2;
-  transition: background 0.6s var(--ease);
   pointer-events: none;
+  background:
+    radial-gradient(circle at 12% 9%, rgba(217, 210, 124, 0.22) 0 14px, transparent 26px),
+    radial-gradient(circle at 84% 6%, rgba(217, 210, 124, 0.16) 0 20px, transparent 36px),
+    radial-gradient(circle at 64% 15%, rgba(236, 222, 150, 0.12) 0 10px, transparent 20px),
+    radial-gradient(circle at 93% 31%, rgba(217, 210, 124, 0.1) 0 16px, transparent 30px),
+    radial-gradient(circle at 4% 38%, rgba(236, 222, 150, 0.09) 0 12px, transparent 24px),
+    radial-gradient(circle at 30% 3%, rgba(212, 163, 115, 0.12) 0 8px, transparent 18px),
+    radial-gradient(ellipse 90% 55% at 70% -5%, var(--accent-glow), transparent 70%);
+  opacity: 0.8;
+  filter: blur(1.5px);
+  transition: background 0.6s var(--ease);
 }
 
 /* Film grain + faint vertical wood grain. */
@@ -145,37 +155,46 @@ button:disabled {
 
 .wordmark h1 {
   margin: 0;
-  font-family: var(--serif);
-  font-weight: 600;
-  font-size: 34px;
-  letter-spacing: -0.02em;
-  font-variation-settings: "SOFT" 100, "WONK" 1;
-  line-height: 1;
-}
-
-.wordmark h1 em {
-  font-style: italic;
-  color: var(--accent);
-  transition: color 0.4s var(--ease);
+  font-family: var(--script);
+  font-weight: 400;
+  font-size: 58px;
+  line-height: 0.9;
+  color: var(--tan);
+  /* Sacramento is a hairline script; a matching stroke gives it the weight of
+     the hand-lettered name on his site. */
+  -webkit-text-stroke: 0.9px var(--tan);
+  text-shadow: 0 0 24px rgba(212, 163, 115, 0.25);
+  padding-right: 6px;
 }
 
 .wordmark span {
-  font-family: var(--hand);
-  font-size: 20px;
+  font-family: var(--serif);
+  font-size: 15px;
   color: var(--muted);
-  transform: rotate(-3deg);
-  display: inline-block;
+  letter-spacing: 0.01em;
 }
 
-.icon-btn {
-  width: 40px;
-  height: 40px;
+.avatar-btn {
+  width: 46px;
+  height: 46px;
+  padding: 0;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
-  border: 1px solid var(--line);
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--muted);
+  border: 2px solid var(--tan);
+  background: var(--paper) center / cover no-repeat;
+  box-shadow: 0 0 0 3px rgba(212, 163, 115, 0.15), 0 6px 16px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  transition: transform 0.2s var(--ease);
+}
+
+.avatar-btn:active {
+  transform: scale(0.94) rotate(-4deg);
+}
+
+.avatar-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ---------- Mode switch ---------- */
@@ -269,8 +288,8 @@ button:disabled {
   background: transparent;
   padding: 18px 20px 4px 52px;
   font-family: var(--serif);
-  font-weight: 600;
-  font-size: 22px;
+  font-weight: 400;
+  font-size: 24px;
   color: var(--paper-ink);
   letter-spacing: -0.01em;
 }
@@ -384,11 +403,10 @@ button:disabled {
 .note-name {
   font-family: var(--serif);
   font-size: 88px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 1;
   letter-spacing: -0.03em;
   color: var(--cream);
-  font-variation-settings: "SOFT" 100;
   min-height: 88px;
   transition: color 0.2s;
 }
@@ -495,8 +513,7 @@ button:disabled {
 
 .field.title {
   font-family: var(--serif);
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 21px;
 }
 
 textarea.field {
@@ -660,7 +677,7 @@ textarea.field {
 
 .rec.on .label {
   background: radial-gradient(circle, #15110e 0 3px, transparent 3.5px),
-    radial-gradient(circle at 35% 30%, #ff8d6c, var(--rec));
+    radial-gradient(circle at 35% 30%, #e46b76, var(--rec));
 }
 
 .rec:disabled {
@@ -759,8 +776,9 @@ textarea.field {
 .lib-head h2 {
   margin: 0;
   font-family: var(--serif);
-  font-size: 28px;
-  font-weight: 600;
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--tan);
   letter-spacing: -0.02em;
 }
 
@@ -810,15 +828,15 @@ textarea.field {
 }
 
 .take[data-kind="lyrics"] {
-  --accent: var(--amber);
-  --accent-soft: rgba(240, 169, 75, 0.14);
-  --accent-glow: rgba(240, 169, 75, 0.35);
+  --accent: var(--tan);
+  --accent-soft: rgba(212, 163, 115, 0.14);
+  --accent-glow: rgba(212, 163, 115, 0.35);
 }
 
 .take[data-kind="melody"] {
-  --accent: var(--sage);
-  --accent-soft: rgba(124, 196, 173, 0.14);
-  --accent-glow: rgba(124, 196, 173, 0.35);
+  --accent: var(--denim);
+  --accent-soft: rgba(127, 162, 216, 0.14);
+  --accent-glow: rgba(127, 162, 216, 0.35);
 }
 
 .take-head {
@@ -851,8 +869,8 @@ textarea.field {
 
 .take-title {
   font-family: var(--serif);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 19px;
+  font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -890,8 +908,8 @@ textarea.field {
 
 .take-note {
   margin: 0;
-  font-family: var(--hand);
-  font-size: 20px;
+  font-family: var(--serif);
+  font-size: 16px;
   color: var(--muted);
   white-space: pre-wrap;
 }
@@ -913,9 +931,20 @@ textarea.field {
 }
 
 .empty .big {
-  font-family: var(--hand);
-  font-size: 30px;
-  color: var(--muted);
+  font-family: var(--serif);
+  font-size: 24px;
+  color: var(--cream);
+}
+
+.empty .portrait {
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--paper);
+  box-shadow: 0 0 0 1px var(--line-strong), 0 16px 40px rgba(0, 0, 0, 0.6);
+  transform: rotate(-4deg);
+  margin-bottom: 10px;
 }
 
 /* ---------- Tab bar ---------- */
@@ -988,7 +1017,9 @@ textarea.field {
   position: relative;
   width: 100%;
   max-width: 380px;
-  padding: 34px 28px 26px;
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  padding: 22px 26px 24px;
   border-radius: 24px;
   background: var(--paper);
   color: var(--paper-ink);
@@ -998,49 +1029,78 @@ textarea.field {
   transform-origin: bottom center;
 }
 
-.gift-card::before {
-  /* A strip of masking tape holding the card up. */
+/* The truck photo as a taped-in snapshot. */
+.polaroid {
+  position: relative;
+  margin: 0 4px 18px;
+  padding: 8px 8px 30px;
+  background: #fff;
+  box-shadow: 0 10px 24px rgba(60, 40, 20, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+  transform: rotate(-2.2deg);
+}
+
+.polaroid::before {
   content: "";
   position: absolute;
-  top: -12px;
+  top: -11px;
   left: 50%;
-  width: 110px;
-  height: 26px;
-  transform: translateX(-50%) rotate(-3deg);
-  background: rgba(240, 222, 180, 0.85);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  width: 96px;
+  height: 24px;
+  transform: translateX(-50%) rotate(3deg);
+  background: rgba(236, 219, 176, 0.82);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+.polaroid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: 55% 30%;
+}
+
+.polaroid figcaption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  text-align: center;
+  font-family: var(--script);
+  font-size: 24px;
+  color: #6b5140;
 }
 
 .gift-card .eyebrow {
   font-size: 12px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #a1603a;
-  font-weight: 700;
+  color: var(--rec);
+  font-weight: 600;
 }
 
 .gift-card h2 {
-  margin: 10px 0 12px;
+  margin: 8px 0 10px;
   font-family: var(--serif);
-  font-size: 34px;
-  line-height: 1.05;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-size: 28px;
+  line-height: 1.12;
+  font-weight: 400;
+  text-wrap: balance;
 }
 
 .gift-card p {
-  margin: 0 0 14px;
-  font-family: var(--serif);
-  font-size: 17px;
-  line-height: 1.5;
-  color: #54463b;
+  margin: 0 0 6px;
+  font-family: var(--sans);
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: #5d4a3d;
 }
 
 .gift-card .sig {
-  font-family: var(--hand);
-  font-size: 28px;
+  font-family: var(--script);
+  font-size: 40px;
+  line-height: 1.1;
   color: var(--paper-ink);
-  margin: 4px 0 22px;
+  margin: 0 0 16px;
 }
 
 .gift-card button {
