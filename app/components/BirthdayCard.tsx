@@ -41,8 +41,8 @@ export default function BirthdayCard({ forceOpen, onClose }: { forceOpen: boolea
           <figcaption>all things born in ’82</figcaption>
         </figure>
         <div className="eyebrow">Happy birthday</div>
-        <h2 id="gift-title">You probably don&apos;t need this…</h2>
-        <p>…but if you do, it&apos;s here. Like me or something. Hold onto that.</p>
+        <h2 id="gift-title">You don&apos;t need this,</h2>
+        <p>but it&apos;s here if you do. Like your big bro!</p>
         <div className="sig">Love, {FROM}</div>
         <button type="button" onClick={close}>
           Catch
