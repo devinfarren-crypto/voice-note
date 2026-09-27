@@ -37,7 +37,7 @@ export default function RootLayout({
         {/* eslint-disable-next-line @next/next/no-page-custom-font */}
         <link
           rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Fondamento:ital@0;1&family=Rubik:wght@400;500;600&family=Sacramento&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Fondamento:ital@0;1&family=Reenie+Beanie&family=Rock+Salt&family=Rubik:wght@400;500;600&family=Sacramento&display=swap"
         />
       </head>
       <body>{children}</body>

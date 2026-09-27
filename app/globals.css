@@ -30,6 +30,10 @@
   --sans: "Rubik", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
   --script: "Sacramento", "Snell Roundhand", "Apple Chancery", cursive;
+  /* Justin's handwriting, faithfully terrible: Rock Salt for anything he'd
+     scrawl big (titles, the wordmark), Reenie Beanie for the lyric pencil. */
+  --scrawl: "Rock Salt", "Marker Felt", "Chalkboard SE", cursive;
+  --pencil: "Reenie Beanie", "Bradley Hand", "Chalkboard SE", cursive;
 
   --radius: 20px;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -155,23 +159,22 @@ button:disabled {
 
 .wordmark h1 {
   margin: 0;
-  font-family: var(--script);
+  font-family: var(--scrawl);
   font-weight: 400;
-  font-size: 58px;
-  line-height: 0.9;
+  font-size: 34px;
+  line-height: 1.3;
   color: var(--tan);
-  /* Sacramento is a hairline script; a matching stroke gives it the weight of
-     the hand-lettered name on his site. */
-  -webkit-text-stroke: 0.9px var(--tan);
   text-shadow: 0 0 24px rgba(212, 163, 115, 0.25);
-  padding-right: 6px;
+  transform: rotate(-5deg) translateY(-2px);
+  padding-right: 4px;
 }
 
 .wordmark span {
-  font-family: var(--serif);
-  font-size: 15px;
+  font-family: var(--pencil);
+  font-size: 23px;
   color: var(--muted);
-  letter-spacing: 0.01em;
+  transform: rotate(2deg) translateY(4px);
+  display: inline-block;
 }
 
 .avatar-btn {
@@ -286,17 +289,19 @@ button:disabled {
   border: none;
   outline: none;
   background: transparent;
-  padding: 18px 20px 4px 52px;
-  font-family: var(--serif);
+  padding: 16px 20px 6px 52px;
+  font-family: var(--scrawl);
   font-weight: 400;
-  font-size: 24px;
+  font-size: 19px;
+  line-height: 1.6;
+  transform: rotate(-1.2deg);
+  transform-origin: left center;
   color: var(--paper-ink);
   letter-spacing: -0.01em;
 }
 
 .sheet-title::placeholder {
-  color: rgba(42, 33, 27, 0.32);
-  font-style: italic;
+  color: rgba(74, 49, 36, 0.3);
 }
 
 .sheet-body {
@@ -318,16 +323,17 @@ button:disabled {
       var(--paper-rule) 33px 34px
     );
   background-attachment: local;
-  padding: 7px 20px 20px 52px;
-  font-family: var(--serif);
-  font-size: 19px;
+  padding: 5px 20px 20px 52px;
+  font-family: var(--pencil);
+  font-size: 27px;
   line-height: 34px;
+  /* Lines drift slightly uphill, like writing on your knee in the truck. */
+  word-spacing: 0.06em;
   color: var(--paper-ink);
 }
 
 .sheet textarea::placeholder {
-  color: rgba(42, 33, 27, 0.35);
-  font-style: italic;
+  color: rgba(74, 49, 36, 0.38);
 }
 
 .interim {
@@ -335,10 +341,9 @@ button:disabled {
   left: 52px;
   right: 20px;
   bottom: 14px;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 17px;
-  color: rgba(42, 33, 27, 0.5);
+  font-family: var(--pencil);
+  font-size: 24px;
+  color: rgba(74, 49, 36, 0.45);
   pointer-events: none;
   white-space: nowrap;
   overflow: hidden;
@@ -401,10 +406,11 @@ button:disabled {
 }
 
 .note-name {
-  font-family: var(--serif);
-  font-size: 88px;
+  font-family: var(--scrawl);
+  font-size: 64px;
   font-weight: 400;
-  line-height: 1;
+  line-height: 1.35;
+  transform: rotate(-4deg);
   letter-spacing: -0.03em;
   color: var(--cream);
   min-height: 88px;
@@ -512,8 +518,15 @@ button:disabled {
 }
 
 .field.title {
-  font-family: var(--serif);
-  font-size: 21px;
+  font-family: var(--scrawl);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+textarea.field.jot {
+  font-family: var(--pencil);
+  font-size: 24px;
+  line-height: 1.15;
 }
 
 textarea.field {
@@ -775,8 +788,10 @@ textarea.field {
 
 .lib-head h2 {
   margin: 0;
-  font-family: var(--serif);
-  font-size: 32px;
+  font-family: var(--scrawl);
+  font-size: 26px;
+  line-height: 1.5;
+  transform: rotate(-3deg);
   font-weight: 400;
   color: var(--tan);
   letter-spacing: -0.02em;
@@ -868,8 +883,9 @@ textarea.field {
 }
 
 .take-title {
-  font-family: var(--serif);
-  font-size: 19px;
+  font-family: var(--scrawl);
+  font-size: 14.5px;
+  line-height: 1.9;
   font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
@@ -898,9 +914,9 @@ textarea.field {
   border-radius: 12px;
   background: var(--paper);
   color: var(--paper-ink);
-  font-family: var(--serif);
-  font-size: 16.5px;
-  line-height: 1.6;
+  font-family: var(--pencil);
+  font-size: 24px;
+  line-height: 1.25;
   white-space: pre-wrap;
   max-height: 320px;
   overflow: auto;
@@ -908,8 +924,8 @@ textarea.field {
 
 .take-note {
   margin: 0;
-  font-family: var(--serif);
-  font-size: 16px;
+  font-family: var(--pencil);
+  font-size: 23px;
   color: var(--muted);
   white-space: pre-wrap;
 }
@@ -931,8 +947,10 @@ textarea.field {
 }
 
 .empty .big {
-  font-family: var(--serif);
-  font-size: 24px;
+  font-family: var(--scrawl);
+  font-size: 18px;
+  line-height: 1.7;
+  transform: rotate(-2deg);
   color: var(--cream);
 }
 

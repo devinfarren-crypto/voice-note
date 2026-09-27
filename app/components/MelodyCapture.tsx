@@ -310,7 +310,7 @@ export default function MelodyCapture({
               maxLength={80}
             />
             <textarea
-              className="field"
+              className="field jot"
               value={jot}
               onChange={(e) => setJot(e.target.value)}
               placeholder="Chords, capo, tuning, where it goes…"
