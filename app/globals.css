@@ -1168,8 +1168,12 @@ textarea.field {
   letter-spacing: 0;
 }
 
+/* He presses this one, so it gets his scrawl too. */
 .gift-card button {
-  font-family: var(--sans);
+  font-family: var(--pencil);
+  font-weight: 400;
+  font-size: 30px;
+  letter-spacing: 0.04em;
 }
 
 /* ---------- Motion ---------- */
