@@ -103,3 +103,12 @@ export const StackIcon = ({ size = 18 }: P) => (
   </svg>
 );
 
+
+export const ForkIcon = ({ size = 22 }: P) => (
+  <svg {...base(size)} strokeWidth={2}>
+    <path d="M8 2.5v7.5a4 4 0 0 0 8 0V2.5" />
+    <path d="M12 14v6.5" />
+    <circle cx="12" cy="21" r="1.2" fill="currentColor" stroke="none" />
+    <path d="M18.5 6.5c1 .8 1 2.2 0 3M20.5 5c2 1.7 2 4.3 0 6" strokeWidth={1.4} />
+  </svg>
+);

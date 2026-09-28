@@ -11,7 +11,8 @@ import BirthdayCard from "./BirthdayCard";
 import Library from "./Library";
 import LyricsCapture from "./LyricsCapture";
 import MelodyCapture from "./MelodyCapture";
-import { MicIcon, NoteIcon, QuillIcon, StackIcon } from "./icons";
+import Tuner from "./Tuner";
+import { ForkIcon, MicIcon, NoteIcon, QuillIcon, StackIcon } from "./icons";
 
 type Tab = "capture" | "takes";
 const MODE_KEY = "catch:mode";
@@ -23,6 +24,18 @@ export default function CatchApp() {
   const [takes, setTakes] = useState<Take[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCard, setShowCard] = useState(false);
+  // The tuner's AudioContext is created inside the tap so iOS lets it run.
+  const [tunerCtx, setTunerCtx] = useState<AudioContext | null>(null);
+
+  const openTuner = () => {
+    if (busy) return;
+    const Ctx =
+      window.AudioContext ??
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    const ctx = new Ctx();
+    void ctx.resume();
+    setTunerCtx(ctx);
+  };
 
   useEffect(() => {
     try {
@@ -73,15 +86,26 @@ export default function CatchApp() {
             <h1>Catch</h1>
             <span>lyrics &amp; melodies</span>
           </div>
-          <button
-            type="button"
-            className="avatar-btn"
-            onClick={() => setShowCard(true)}
-            aria-label="Open birthday card"
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="justin-sketch.jpg" alt="" />
-          </button>
+          <div className="brand-actions">
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={openTuner}
+              disabled={busy}
+              aria-label="Open guitar tuner"
+            >
+              <ForkIcon />
+            </button>
+            <button
+              type="button"
+              className="avatar-btn"
+              onClick={() => setShowCard(true)}
+              aria-label="Open birthday card"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="justin-sketch.jpg" alt="" />
+            </button>
+          </div>
         </header>
 
         {tab === "capture" ? (
@@ -140,6 +164,8 @@ export default function CatchApp() {
           {takes.length > 0 && <span className="count">{takes.length}</span>}
         </button>
       </nav>
+
+      {tunerCtx && <Tuner ctx={tunerCtx} onClose={() => setTunerCtx(null)} />}
 
       <BirthdayCard forceOpen={showCard} onClose={() => setShowCard(false)} />
     </main>

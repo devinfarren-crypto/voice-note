@@ -59,3 +59,60 @@ export function frequencyToNote(freq: number): NoteReading {
     cents: Math.round((midi - nearest) * 100),
   };
 }
+
+/**
+ * Tuner-grade detector for plucked strings. Uses normalised autocorrelation
+ * and takes the *first* peak close to the strongest one (McLeod-style), which
+ * avoids the octave slips that strong string harmonics cause. Reaches down to
+ * ~55Hz for drop B / baritone tunings. Expects a buffer already downsampled
+ * to keep the work cheap on a phone.
+ */
+export function detectStringPitch(
+  buf: Float32Array,
+  sampleRate: number,
+  minHz = 55,
+  maxHz = 1000
+): { freq: number; clarity: number } | null {
+  const size = buf.length;
+  let energy = 0;
+  for (let i = 0; i < size; i++) energy += buf[i] * buf[i];
+  if (Math.sqrt(energy / size) < 0.003) return null;
+
+  const minLag = Math.max(2, Math.floor(sampleRate / maxHz));
+  const maxLag = Math.min(Math.floor(sampleRate / minHz), Math.floor(size * 0.66));
+
+  // NSDF: 2·r(τ) / (m(τ)), bounded to [-1, 1].
+  const nsdf = new Float32Array(maxLag + 2);
+  for (let lag = minLag - 1; lag <= maxLag + 1; lag++) {
+    let acf = 0;
+    let m = 0;
+    for (let i = 0; i < size - lag; i++) {
+      const a = buf[i];
+      const b = buf[i + lag];
+      acf += a * b;
+      m += a * a + b * b;
+    }
+    nsdf[lag] = m ? (2 * acf) / m : 0;
+  }
+
+  // Collect local maxima after the first zero crossing.
+  let lag = minLag;
+  while (lag <= maxLag && nsdf[lag] > 0) lag++;
+  const peaks: number[] = [];
+  let globalMax = 0;
+  for (; lag <= maxLag; lag++) {
+    if (nsdf[lag] > 0 && nsdf[lag] >= nsdf[lag - 1] && nsdf[lag] > nsdf[lag + 1]) {
+      peaks.push(lag);
+      if (nsdf[lag] > globalMax) globalMax = nsdf[lag];
+    }
+  }
+  if (!peaks.length || globalMax < 0.8) return null;
+
+  const chosen = peaks.find((p) => nsdf[p] >= 0.88 * globalMax)!;
+  const a = nsdf[chosen - 1];
+  const b = nsdf[chosen];
+  const c = nsdf[chosen + 1];
+  const denom = a - 2 * b + c;
+  const shift = denom ? (0.5 * (a - c)) / denom : 0;
+  return { freq: sampleRate / (chosen + shift), clarity: b };
+}

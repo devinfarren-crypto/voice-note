@@ -13,6 +13,13 @@ Pick what you're catching:
   note you're on like a tuner. Every take is **saved the moment you stop**. You
   can name it and jot chords/capo/tuning afterwards.
 
+There's also a **guitar tuner** behind the tuning-fork button in the corner.
+It listens without recording, works out which string is being played (or
+sticks to one you tap), and has about two dozen presets: standard and drop,
+down-tuned, open, and modal/folk tunings like DADGAD and CGCFCE. It also has a
+capo setting and **Make my own**, which nudges any string up or down a semitone
+and saves the tuning on the phone.
+
 Everything lands in **Takes**, stored on the device (IndexedDB). Any take can be
 **emailed** (melodies go as an audio attachment) or sent through the iOS
 **share sheet** (Voice Memos, Messages, Files, AirDrop…).
