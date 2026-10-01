@@ -40,7 +40,7 @@ export default function BirthdayCard({ forceOpen, onClose }: { forceOpen: boolea
           <img src="justin-truck.jpg" alt={`${TO} standing in the bed of his yellow Toyota pickup`} />
           <figcaption>born in ’82</figcaption>
         </figure>
-        <div className="eyebrow">Happy birthday</div>
+        <div className="eyebrow">Happy Birthday J</div>
         <h2 id="gift-title">You don&apos;t need this.</h2>
         <p>But it&apos;s here if you do. Brother style.</p>
         <div className="sig">Love, {FROM}</div>
