@@ -112,3 +112,13 @@ export const ForkIcon = ({ size = 22 }: P) => (
     <path d="M18.5 6.5c1 .8 1 2.2 0 3M20.5 5c2 1.7 2 4.3 0 6" strokeWidth={1.4} />
   </svg>
 );
+
+export const TruckIcon = ({ size = 22 }: P) => (
+  <svg {...base(size)}>
+    <path d="M2.5 15.5V11h10V7h4.2l2.3 3.3 2.5 1.2v4" />
+    <path d="M12.5 11h6.4" />
+    <circle cx="7" cy="16.5" r="2" />
+    <circle cx="17" cy="16.5" r="2" />
+    <path d="M9 16.5h6" />
+  </svg>
+);

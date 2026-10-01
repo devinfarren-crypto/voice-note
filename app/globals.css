@@ -1539,6 +1539,189 @@ textarea.field {
   margin-top: 18px;
 }
 
+/* ---------- Shed hours (10pm–5am) ----------
+   Everything dims and warms, and a bare bulb hangs over the page. */
+
+.app[data-night] {
+  --bg: #070504;
+  --bg-2: #110c09;
+  --surface: #18110d;
+  --surface-2: #221913;
+  --cream: #f3e2c4;
+  --paper: #efe2c9;
+  --muted: #9e8a71;
+  --faint: #635443;
+  --line: rgba(255, 210, 150, 0.08);
+  --line-strong: rgba(255, 210, 150, 0.15);
+  --tan: #e2a66a;
+  background: var(--bg);
+}
+
+.app[data-night]::before {
+  background:
+    radial-gradient(circle at 47% 52px, rgba(255, 196, 110, 0.5) 0 10px, rgba(255, 170, 80, 0.2) 70px, rgba(255, 150, 60, 0.07) 240px, transparent 520px),
+    radial-gradient(circle at 10% 30%, rgba(217, 180, 110, 0.06) 0 14px, transparent 28px),
+    radial-gradient(circle at 90% 40%, rgba(217, 180, 110, 0.05) 0 18px, transparent 34px),
+    radial-gradient(ellipse 120% 90% at 50% 30%, transparent 45%, rgba(0, 0, 0, 0.6));
+  filter: none;
+  opacity: 1;
+  animation: lamp 9s ease-in-out infinite;
+}
+
+.app[data-night] .sheet {
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.35) inset, 0 24px 60px rgba(0, 0, 0, 0.7),
+    0 -30px 80px -40px rgba(255, 170, 80, 0.35);
+}
+
+.bulb {
+  position: fixed;
+  top: 0;
+  left: 47%;
+  z-index: 1;
+  width: 2px;
+  height: 44px;
+  margin-left: -1px;
+  background: linear-gradient(#000, #3a2c22);
+  pointer-events: none;
+}
+
+.bulb span {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  width: 14px;
+  height: 18px;
+  margin-left: -7px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 45% 45%;
+  background: radial-gradient(circle at 50% 60%, #fff4d6, #ffc46e 55%, #e8963e);
+  box-shadow: 0 0 14px 4px rgba(255, 190, 100, 0.65), 0 0 60px 20px rgba(255, 160, 70, 0.22);
+  animation: lamp 9s ease-in-out infinite;
+}
+
+.bulb span::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 3px;
+  width: 8px;
+  height: 7px;
+  border-radius: 2px;
+  background: #4a3a2c;
+}
+
+@keyframes lamp {
+  0%, 100% { opacity: 1; }
+  41% { opacity: 1; }
+  42% { opacity: 0.82; }
+  43% { opacity: 0.97; }
+  44% { opacity: 0.88; }
+  46% { opacity: 1; }
+  78% { opacity: 0.94; }
+}
+
+/* ---------- Truck mode ---------- */
+
+.truck {
+  position: fixed;
+  inset: 0;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, #1b1612, var(--bg) 70%);
+  padding: env(safe-area-inset-top) 0 max(18px, env(safe-area-inset-bottom));
+  animation: fade 0.25s ease both;
+}
+
+.truck.on {
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, #2a1215, var(--bg) 70%);
+}
+
+.truck-hit {
+  flex: 1;
+  width: 100%;
+  border: none;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 20px;
+  touch-action: manipulation;
+}
+
+.truck-disc {
+  position: relative;
+  width: min(74vw, 340px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle, #1c1815 0 18%, transparent 18.5%),
+    repeating-radial-gradient(circle, #0f0c0a 0 2px, #1d1814 2px 5px);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 30px 70px rgba(0, 0, 0, 0.7),
+    inset 0 0 0 10px #0c0a09;
+}
+
+.truck.on .truck-disc {
+  animation: spin 1.8s linear infinite, truck-halo 1.8s ease-in-out infinite;
+}
+
+.truck-label {
+  width: 40%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle, #15110e 0 5px, transparent 6px),
+    radial-gradient(circle at 35% 30%, #ecc9a0, var(--tan));
+  box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.25);
+}
+
+.truck.on .truck-label {
+  background: radial-gradient(circle, #15110e 0 5px, transparent 6px),
+    radial-gradient(circle at 35% 30%, #e46b76, var(--rec));
+}
+
+.truck-time {
+  font-family: var(--scrawl);
+  font-size: 54px;
+  line-height: 1.3;
+  color: var(--cream);
+  font-variant-numeric: tabular-nums;
+  transform: rotate(-3deg);
+}
+
+.truck.on .truck-time {
+  color: #ff8f98;
+}
+
+.truck-say {
+  font-family: var(--pencil);
+  font-size: 28px;
+  color: var(--muted);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.15;
+}
+
+.truck-exit {
+  align-self: center;
+  height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-family: var(--pencil);
+  font-size: 22px;
+}
+
+@keyframes truck-halo {
+  50% {
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06), 0 30px 70px rgba(0, 0, 0, 0.7),
+      inset 0 0 0 10px #0c0a09, 0 0 0 18px rgba(200, 66, 79, 0.18), 0 0 90px rgba(200, 66, 79, 0.35);
+  }
+}
+
 /* ---------- His buttons, his handwriting ----------
    Anything Justin presses is labelled in his pencil scrawl. The birthday
    card (from Devin) keeps its own neat type. */

@@ -3,7 +3,8 @@
 // Catch — a pocket notebook for a songwriter. Two ways in: Lyrics (dictate
 // onto a lyric sheet) and Melody (record audio with a live note readout).
 // Everything saved lands in Takes, stored on the device, and any take can be
-// emailed or sent through the share sheet.
+// emailed or sent through the share sheet. Extras: a guitar tuner, truck mode
+// (one giant record button that starts on launch), and shed hours after 10pm.
 
 import { useCallback, useEffect, useState } from "react";
 import { deleteTake, listTakes, type Take, type TakeKind } from "../lib/db";
@@ -12,10 +13,13 @@ import Library from "./Library";
 import LyricsCapture from "./LyricsCapture";
 import MelodyCapture from "./MelodyCapture";
 import Tuner from "./Tuner";
-import { ForkIcon, MicIcon, NoteIcon, QuillIcon, StackIcon } from "./icons";
+import TruckMode from "./TruckMode";
+import { useNight } from "../lib/useNight";
+import { ForkIcon, MicIcon, NoteIcon, QuillIcon, StackIcon, TruckIcon } from "./icons";
 
 type Tab = "capture" | "takes";
 const MODE_KEY = "catch:mode";
+const TRUCK_KEY = "catch:truck";
 
 export default function CatchApp() {
   const [mode, setMode] = useState<TakeKind>("lyrics");
@@ -26,6 +30,19 @@ export default function CatchApp() {
   const [showCard, setShowCard] = useState(false);
   // The tuner's AudioContext is created inside the tap so iOS lets it run.
   const [tunerCtx, setTunerCtx] = useState<AudioContext | null>(null);
+  // Truck mode sticks across launches until he leaves it.
+  const [truck, setTruck] = useState(false);
+  const night = useNight();
+
+  const setTruckMode = (on: boolean) => {
+    setTruck(on);
+    try {
+      if (on) localStorage.setItem(TRUCK_KEY, "1");
+      else localStorage.removeItem(TRUCK_KEY);
+    } catch {
+      // ignore
+    }
+  };
 
   const openTuner = () => {
     if (busy) return;
@@ -43,6 +60,7 @@ export default function CatchApp() {
       // Restoring the last-used mode can only happen client-side.
       // eslint-disable-next-line react-hooks/set-state-in-effect
       if (saved === "melody" || saved === "lyrics") setMode(saved);
+      if (localStorage.getItem(TRUCK_KEY)) setTruck(true);
     } catch {
       // ignore
     }
@@ -79,14 +97,28 @@ export default function CatchApp() {
   );
 
   return (
-    <main className="app" data-mode={mode}>
+    <main className="app" data-mode={mode} data-night={night || undefined}>
+      {night && (
+        <div className="bulb" aria-hidden="true">
+          <span />
+        </div>
+      )}
       <div className="column">
         <header className="brand">
           <div className="wordmark">
             <h1>Catch</h1>
-            <span>lyrics &amp; melodies</span>
+            <span>{night ? "shed hours" : "lyrics & melodies"}</span>
           </div>
           <div className="brand-actions">
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={() => setTruckMode(true)}
+              disabled={busy}
+              aria-label="Truck mode"
+            >
+              <TruckIcon />
+            </button>
             <button
               type="button"
               className="icon-btn"
@@ -164,6 +196,8 @@ export default function CatchApp() {
           {takes.length > 0 && <span className="count">{takes.length}</span>}
         </button>
       </nav>
+
+      {truck && <TruckMode onSaved={upsert} onExit={() => setTruckMode(false)} />}
 
       {tunerCtx && <Tuner ctx={tunerCtx} onClose={() => setTunerCtx(null)} />}
 

@@ -20,6 +20,16 @@ down-tuned, open, and modal/folk tunings like DADGAD and CGCFCE. It also has a
 capo setting and **Make my own**, which nudges any string up or down a semitone
 and saves the tuning on the phone.
 
+**Truck mode** (the truck button) turns the whole screen into one giant record
+button that starts recording the moment it opens. Tap anywhere to save, tap
+again for another take. While it's on, Catch opens straight into it — so
+launching the app *is* hitting record — until he taps **Out of the truck**. It
+keeps the screen awake, and takes land in Takes titled like `Truck · 9:41 PM`.
+
+**Shed hours**: between 10pm and 5am a bare bulb hangs over the page and
+everything goes dim and warm. (Set `catch:night` to `on`/`off` in
+localStorage to force it either way.)
+
 Everything lands in **Takes**, stored on the device (IndexedDB). Any take can be
 **emailed** (melodies go as an audio attachment) or sent through the iOS
 **share sheet** (Voice Memos, Messages, Files, AirDrop…).
