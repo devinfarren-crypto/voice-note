@@ -1,15 +1,15 @@
 "use client";
 
-// Truck mode: the whole screen is one record button. It starts recording the
-// moment it appears — including every time the app is opened while truck mode
-// is on — and a tap anywhere stops and saves. Nothing to aim for, nothing to
-// read; eyes stay on the road.
+// Truck mode: the whole screen is one giant Start / Stop button. Truck mode
+// stays on across launches until he climbs out, so the app opens straight to
+// it; one tap anywhere starts recording, another stops and saves. Nothing to
+// aim for, nothing to read; eyes stay on the road.
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { newId, saveTake, type Take } from "../lib/db";
 import { formatDuration, pickAudioMime } from "../lib/format";
 
-type Phase = "starting" | "recording" | "saved" | "idle" | "blocked";
+type Phase = "idle" | "starting" | "recording" | "saved" | "blocked";
 
 export default function TruckMode({
   onSaved,
@@ -18,7 +18,7 @@ export default function TruckMode({
   onSaved: (take: Take) => void;
   onExit: () => void;
 }) {
-  const [phase, setPhase] = useState<Phase>("starting");
+  const [phase, setPhase] = useState<Phase>("idle");
   const [elapsed, setElapsed] = useState(0);
   const [lastLength, setLastLength] = useState(0);
   const [count, setCount] = useState(0);
@@ -106,17 +106,15 @@ export default function TruckMode({
     if (rec && rec.state !== "inactive") rec.stop();
   };
 
-  // Start the moment truck mode appears.
-  useEffect(() => {
-    // Recording has to begin from an effect so it fires on app launch.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    void start();
-    return () => {
+  // If truck mode is left some other way mid-take, still save what was caught.
+  useEffect(
+    () => () => {
       const rec = recRef.current;
       if (rec && rec.state !== "inactive") rec.stop();
       release();
-    };
-  }, [start]);
+    },
+    []
+  );
 
   // Keep the screen on while he's driving.
   useEffect(() => {
@@ -155,20 +153,26 @@ export default function TruckMode({
         onClick={recording ? stop : start}
         aria-label={recording ? "Stop and save" : "Start recording"}
       >
-        <span className="truck-disc" aria-hidden="true">
-          <span className="truck-label" />
+        <span className="truck-disc-wrap" aria-hidden="true">
+          <span className="truck-disc">
+            <span className="truck-label" />
+          </span>
+          {/* Sits on top of the label but doesn't spin with the record. */}
+          <span className="truck-word">{recording ? "Stop" : phase === "starting" ? "…" : "Start"}</span>
         </span>
         <span className="truck-time">
-          {recording ? formatDuration(elapsed) : phase === "saved" ? "Saved" : phase === "starting" ? "…" : "Tap"}
+          {recording ? formatDuration(elapsed) : phase === "saved" ? "Saved" : ""}
         </span>
         <span className="truck-say">
           {recording
-            ? "Rolling. Tap anywhere to save."
+            ? "Rolling. Tap anywhere to stop and save."
             : phase === "saved"
-              ? `${formatDuration(lastLength)} caught${count > 1 ? ` · ${count} this drive` : ""}. Tap to catch another.`
+              ? `${formatDuration(lastLength)} caught${count > 1 ? ` · ${count} this drive` : ""}. Tap Start for another.`
               : phase === "blocked"
-                ? "Tap anywhere to start recording."
-                : "Starting…"}
+                ? "Couldn't get the mic. Tap Start to try again."
+                : phase === "starting"
+                  ? "Getting the mic…"
+                  : "Tap anywhere to start recording."}
         </span>
       </button>
       <button type="button" className="truck-exit" onClick={leave}>

@@ -1652,6 +1652,27 @@ textarea.field {
   touch-action: manipulation;
 }
 
+.truck-disc-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.truck-word {
+  position: absolute;
+  font-family: var(--scrawl);
+  font-size: clamp(28px, 9vw, 40px);
+  line-height: 1;
+  padding-top: 0.25em;
+  color: #15110e;
+  transform: rotate(-6deg);
+  pointer-events: none;
+}
+
+.truck.on .truck-word {
+  color: #fff4ea;
+}
+
 .truck-disc {
   position: relative;
   width: min(74vw, 340px);
@@ -1670,20 +1691,20 @@ textarea.field {
 }
 
 .truck-label {
-  width: 40%;
+  width: 52%;
   aspect-ratio: 1;
   border-radius: 50%;
-  background: radial-gradient(circle, #15110e 0 5px, transparent 6px),
-    radial-gradient(circle at 35% 30%, #ecc9a0, var(--tan));
+  /* No spindle hole here: the Start/Stop word sits where it would be. */
+  background: radial-gradient(circle at 35% 30%, #ecc9a0, var(--tan));
   box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.25);
 }
 
 .truck.on .truck-label {
-  background: radial-gradient(circle, #15110e 0 5px, transparent 6px),
-    radial-gradient(circle at 35% 30%, #e46b76, var(--rec));
+  background: radial-gradient(circle at 35% 30%, #e46b76, var(--rec));
 }
 
 .truck-time {
+  min-height: 70px;
   font-family: var(--scrawl);
   font-size: 54px;
   line-height: 1.3;

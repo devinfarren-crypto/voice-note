@@ -84,7 +84,7 @@ export default function Settings({
 
         <section>
           <h3>Truck mode</h3>
-          <p>One giant button that records the moment Catch opens. Stays on until you climb out.</p>
+          <p>One giant Start / Stop button for catching ideas while driving. Stays on until you climb out.</p>
           <button type="button" className="chip-btn primary wide" onClick={onTruck}>
             <TruckIcon size={20} /> Get in the truck
           </button>
