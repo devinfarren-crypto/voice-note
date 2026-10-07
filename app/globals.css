@@ -1106,16 +1106,18 @@ textarea.field {
   object-position: 55% 30%;
 }
 
+/* Scrawled across the bottom of the snapshot in red marker. */
 .polaroid figcaption {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 10px;
+  bottom: 9px;
   text-align: center;
-  font-family: var(--script);
-  font-size: 26px;
-  line-height: 1;
-  color: #6b5140;
+  font-family: var(--scrawl);
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--rec);
+  transform: rotate(-2.5deg);
 }
 
 .gift-card .eyebrow {
