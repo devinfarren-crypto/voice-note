@@ -26,9 +26,12 @@ again for another take. While it's on, Catch opens straight into it — so
 launching the app *is* hitting record — until he taps **Out of the truck**. It
 keeps the screen awake, and takes land in Takes titled like `Truck · 9:41 PM`.
 
-**Shed hours**: between 10pm and 5am a bare bulb hangs over the page and
-everything goes dim and warm. (Set `catch:night` to `on`/`off` in
-localStorage to force it either way.)
+**Shed hours**: a bare bulb hangs over the page and everything goes dim and
+warm — after 10pm by default, or always/never.
+
+**Tap his face** (top right) for his settings: shed hours (after 10pm /
+always / never), where emailed takes go, a button into truck mode, and
+Devin's birthday note again.
 
 Everything lands in **Takes**, stored on the device (IndexedDB). Any take can be
 **emailed** (melodies go as an audio attachment) or sent through the iOS

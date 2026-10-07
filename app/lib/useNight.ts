@@ -2,9 +2,30 @@
 
 import { useEffect, useState } from "react";
 
-// "Shed hours": 10pm–5am local time. A `catch:night` value of "on" or "off"
-// in localStorage overrides the clock (handy for showing it off by daylight).
+// "Shed hours": 10pm–5am local time by default. He can pin it on or off from
+// his settings, stored as `catch:night` = "on" | "off" (absent = by the clock).
 const OVERRIDE_KEY = "catch:night";
+
+export type NightPref = "auto" | "on" | "off";
+
+export function getNightPref(): NightPref {
+  try {
+    const o = localStorage.getItem(OVERRIDE_KEY);
+    return o === "on" || o === "off" ? o : "auto";
+  } catch {
+    return "auto";
+  }
+}
+
+export function setNightPref(pref: NightPref) {
+  try {
+    if (pref === "auto") localStorage.removeItem(OVERRIDE_KEY);
+    else localStorage.setItem(OVERRIDE_KEY, pref);
+  } catch {
+    // ignore
+  }
+  window.dispatchEvent(new Event("catch:night"));
+}
 
 function isNight(): boolean {
   try {

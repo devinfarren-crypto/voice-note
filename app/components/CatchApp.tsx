@@ -13,6 +13,7 @@ import Library from "./Library";
 import LyricsCapture from "./LyricsCapture";
 import MelodyCapture from "./MelodyCapture";
 import RecipientProvider from "./RecipientProvider";
+import Settings from "./Settings";
 import Tuner from "./Tuner";
 import TruckMode from "./TruckMode";
 import { useNight } from "../lib/useNight";
@@ -29,6 +30,7 @@ export default function CatchApp() {
   const [takes, setTakes] = useState<Take[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCard, setShowCard] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   // The tuner's AudioContext is created inside the tap so iOS lets it run.
   const [tunerCtx, setTunerCtx] = useState<AudioContext | null>(null);
   // Truck mode sticks across launches until he leaves it.
@@ -133,8 +135,8 @@ export default function CatchApp() {
               <button
                 type="button"
                 className="avatar-btn"
-                onClick={() => setShowCard(true)}
-                aria-label="Open birthday card"
+                onClick={() => setShowSettings(true)}
+                aria-label="Your settings"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="justin-sketch.jpg" alt="" />
@@ -198,6 +200,20 @@ export default function CatchApp() {
             {takes.length > 0 && <span className="count">{takes.length}</span>}
           </button>
         </nav>
+
+        {showSettings && (
+          <Settings
+            onClose={() => setShowSettings(false)}
+            onTruck={() => {
+              setShowSettings(false);
+              setTruckMode(true);
+            }}
+            onCard={() => {
+              setShowSettings(false);
+              setShowCard(true);
+            }}
+          />
+        )}
 
         {truck && <TruckMode onSaved={upsert} onExit={() => setTruckMode(false)} />}
 
