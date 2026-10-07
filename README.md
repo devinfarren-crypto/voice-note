@@ -55,10 +55,27 @@ npm run dev                  # http://localhost:3000
 
 | Variable            | Required | Purpose                                                                      |
 | ------------------- | -------- | ---------------------------------------------------------------------------- |
-| `RESEND_API_KEY`    | yes      | Sends the email via Resend.                                                  |
-| `NOTIFY_FROM_EMAIL` | yes      | Verified Resend sender, e.g. `Catch <catch@yourdomain.com>`.                 |
-| `NOTE_RECIPIENT`    | **set this** | Where takes are emailed — **set it to Justin's address**. Defaults to `devinfarren@gmail.com`. |
+| `RESEND_API_KEY`    | yes      | Sends email via Resend.                                                      |
+| `NOTIFY_FROM_EMAIL` | yes      | Sender on a domain verified in Resend, e.g. `Catch <catch@yourdomain.com>`.  |
+| `NOTE_RECIPIENT`    | no       | Fallback inbox, used only if he hasn't chosen one in the app. Leave unset.   |
+| `CATCH_SECRET`      | no       | Signs confirmed email addresses. Defaults to `RESEND_API_KEY`; set your own long random string if you'd rather rotating the Resend key not sign him out. |
 | `ANTHROPIC_API_KEY` | no       | Generates a two-word subject for untitled takes. Falls back to the first two words. |
+
+### Where emailed takes go
+
+He chooses. The first time he taps **Email** or **Send**, Catch asks for his
+address, emails him a 6-digit code, and once he types it in, every emailed take
+goes there. **Takes → Change** switches to a different address the same way.
+
+The code step is what stops strangers who find the link from using your Resend
+account to mail anyone they like: the server only sends takes to an address
+that came back with proof it was confirmed (an HMAC token — no database
+needed). The one email it will send to an unconfirmed address is the code
+itself.
+
+Resend only delivers to arbitrary addresses from a **domain you've verified in
+Resend** — the `onboarding@resend.dev` test sender can only reach your own
+account's inbox.
 
 Email subjects look like `Lyrics · 9:41 PM · Sep 26, 2026 · Board by Board` or
 `Melody · 11:02 PM · Sep 26, 2026 · Porch hum`.

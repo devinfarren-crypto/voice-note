@@ -5,6 +5,7 @@ import type { Take, TakeKind } from "../lib/db";
 import { formatDuration, friendlyDate } from "../lib/format";
 import AudioPlayer from "./AudioPlayer";
 import TakeActions from "./TakeActions";
+import { useRecipient } from "./RecipientProvider";
 import { NoteIcon, QuillIcon } from "./icons";
 
 type Filter = "all" | TakeKind;
@@ -41,6 +42,7 @@ export default function Library({
   const [open, setOpen] = useState<string | null>(null);
   const shown = filter === "all" ? takes : takes.filter((t) => t.kind === filter);
   const lyricCount = takes.filter((t) => t.kind === "lyrics").length;
+  const { recipient, change } = useRecipient();
 
   return (
     <section className="column" aria-label="Saved takes">
@@ -51,6 +53,19 @@ export default function Library({
           {takes.length - lyricCount === 1 ? "y" : "ies"}
         </span>
       </div>
+
+      <p className="send-to-line">
+        {recipient ? (
+          <>
+            Emailed takes go to <b>{recipient.email}</b>
+          </>
+        ) : (
+          "Emailed takes don't have anywhere to go yet."
+        )}{" "}
+        <button type="button" onClick={change}>
+          {recipient ? "Change" : "Choose"}
+        </button>
+      </p>
 
       <div className="filters" role="group" aria-label="Filter takes">
         {(["all", "lyrics", "melody"] as Filter[]).map((f) => (

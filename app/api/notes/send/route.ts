@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { Resend } from "resend";
+import { checkToken, normaliseEmail } from "../../../lib/server/recipient";
 
 // Song-idea delivery. Takes a lyric or melody take plus client-formatted local
 // time/date, asks Claude for a two-word summary of any lyric text, and emails
-// it (with the melody audio attached) to the configured recipient. The
-// recipient is fixed server-side (env, defaulting to the owner) — this endpoint
-// is unauthenticated by design, so the worst an abuser can do is spam that one
-// inbox, never an arbitrary address.
+// it (with the melody audio attached). It goes to the address he chose in the
+// app — but only with a token proving he confirmed that inbox (see
+// lib/server/recipient.ts) — or else to NOTE_RECIPIENT if one is set. The
+// endpoint is unauthenticated, so it must never mail an unconfirmed address.
 
-const RECIPIENT = process.env.NOTE_RECIPIENT ?? "devinfarren@gmail.com";
+const FALLBACK_RECIPIENT = process.env.NOTE_RECIPIENT || null;
 const MAX_NOTE_CHARS = 8000;
 // Vercel rejects bodies over 4.5 MB, so real audio never gets near this.
 const MAX_AUDIO_BASE64_CHARS = 4_400_000;
@@ -91,6 +92,21 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const chosen = normaliseEmail(body.to);
+  if (body.to && !(chosen && checkToken(chosen, body.toToken))) {
+    return NextResponse.json(
+      { ok: false, error: "Confirm your email address again.", needsRecipient: true },
+      { status: 400 }
+    );
+  }
+  const recipient = chosen ?? FALLBACK_RECIPIENT;
+  if (!recipient) {
+    return NextResponse.json(
+      { ok: false, error: "Choose where your takes should go first.", needsRecipient: true },
+      { status: 400 }
+    );
+  }
+
   const apiKey = process.env.RESEND_API_KEY;
   const from = process.env.NOTIFY_FROM_EMAIL;
   if (!apiKey || !from) {
@@ -128,7 +144,7 @@ export async function POST(req: NextRequest) {
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
       from,
-      to: RECIPIENT,
+      to: recipient,
       subject,
       text: emailText,
       attachments: audioBase64
@@ -139,7 +155,7 @@ export async function POST(req: NextRequest) {
       console.error("[notes/send] resend error:", error);
       return NextResponse.json({ ok: false, error: "Couldn't send the email." }, { status: 502 });
     }
-    return NextResponse.json({ ok: true, subject });
+    return NextResponse.json({ ok: true, subject, to: recipient });
   } catch (err) {
     console.error("[notes/send] send threw:", err);
     return NextResponse.json({ ok: false, error: "Couldn't send the email." }, { status: 502 });

@@ -1722,6 +1722,86 @@ textarea.field {
   }
 }
 
+/* ---------- Where emailed takes go ---------- */
+
+.send-to {
+  width: 100%;
+  max-width: 400px;
+  padding: 24px 22px 22px;
+  border-radius: 24px;
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid var(--line-strong);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.7);
+  animation: rise 0.45s var(--ease) both;
+}
+
+.send-to h2 {
+  margin: 0 0 8px;
+  font-family: var(--scrawl);
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1.5;
+  color: var(--tan);
+}
+
+.send-to p {
+  margin: 0 0 14px;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.send-to p b {
+  color: var(--cream);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.send-to form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.send-to form p {
+  margin: 0;
+}
+
+.field.code {
+  font-size: 28px;
+  letter-spacing: 0.4em;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.send-to .notice {
+  margin-top: 12px;
+}
+
+.send-to-line {
+  margin: -6px 2px 14px;
+  font-size: 13px;
+  color: var(--faint);
+  line-height: 1.5;
+}
+
+.send-to-line b {
+  color: var(--muted);
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.send-to-line button {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  color: var(--tan);
+  font-family: var(--pencil);
+  font-size: 20px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ---------- His buttons, his handwriting ----------
    Anything Justin presses is labelled in his pencil scrawl. The birthday
    card (from Devin) keeps its own neat type. */

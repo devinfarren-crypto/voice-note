@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import type { Take } from "../lib/db";
-import { downloadTake, emailTake, shareTake } from "../lib/send";
+import { downloadTake, emailTake, RecipientRejected, shareTake } from "../lib/send";
+import { useRecipient } from "./RecipientProvider";
 import { CopyIcon, MailIcon, ShareIcon, TrashIcon } from "./icons";
 
 type Status = { kind: "idle" | "busy" | "ok" | "error"; msg: string };
@@ -20,13 +21,17 @@ export default function TakeActions({
 }) {
   const [status, setStatus] = useState<Status>({ kind: "idle", msg: "" });
   const [confirming, setConfirming] = useState(false);
+  const { ensure, forget } = useRecipient();
 
   const email = async () => {
+    const to = await ensure();
+    if (!to) return;
     setStatus({ kind: "busy", msg: "Sending…" });
     try {
-      const subject = await emailTake(take);
-      setStatus({ kind: "ok", msg: `Sent — “${subject}”` });
+      await emailTake(take, to);
+      setStatus({ kind: "ok", msg: `Sent to ${to.email}` });
     } catch (err) {
+      if (err instanceof RecipientRejected) forget();
       setStatus({ kind: "error", msg: (err as Error).message });
     }
   };

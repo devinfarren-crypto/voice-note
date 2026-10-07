@@ -12,6 +12,7 @@ import BirthdayCard from "./BirthdayCard";
 import Library from "./Library";
 import LyricsCapture from "./LyricsCapture";
 import MelodyCapture from "./MelodyCapture";
+import RecipientProvider from "./RecipientProvider";
 import Tuner from "./Tuner";
 import TruckMode from "./TruckMode";
 import { useNight } from "../lib/useNight";
@@ -97,111 +98,113 @@ export default function CatchApp() {
   );
 
   return (
-    <main className="app" data-mode={mode} data-night={night || undefined}>
-      {night && (
-        <div className="bulb" aria-hidden="true">
-          <span />
-        </div>
-      )}
-      <div className="column">
-        <header className="brand">
-          <div className="wordmark">
-            <h1>Catch</h1>
-            <span>{night ? "shed hours" : "lyrics & melodies"}</span>
+    <RecipientProvider>
+      <main className="app" data-mode={mode} data-night={night || undefined}>
+        {night && (
+          <div className="bulb" aria-hidden="true">
+            <span />
           </div>
-          <div className="brand-actions">
-            <button
-              type="button"
-              className="icon-btn"
-              onClick={() => setTruckMode(true)}
-              disabled={busy}
-              aria-label="Truck mode"
-            >
-              <TruckIcon />
-            </button>
-            <button
-              type="button"
-              className="icon-btn"
-              onClick={openTuner}
-              disabled={busy}
-              aria-label="Open guitar tuner"
-            >
-              <ForkIcon />
-            </button>
-            <button
-              type="button"
-              className="avatar-btn"
-              onClick={() => setShowCard(true)}
-              aria-label="Open birthday card"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="justin-sketch.jpg" alt="" />
-            </button>
-          </div>
-        </header>
-
-        {tab === "capture" ? (
-          <>
-            <div className="mode-switch" role="radiogroup" aria-label="What are you catching?">
-              <span className="pill" aria-hidden="true" />
+        )}
+        <div className="column">
+          <header className="brand">
+            <div className="wordmark">
+              <h1>Catch</h1>
+              <span>{night ? "shed hours" : "lyrics & melodies"}</span>
+            </div>
+            <div className="brand-actions">
               <button
                 type="button"
-                role="radio"
-                aria-checked={mode === "lyrics"}
-                disabled={busy && mode !== "lyrics"}
-                onClick={() => chooseMode("lyrics")}
+                className="icon-btn"
+                onClick={() => setTruckMode(true)}
+                disabled={busy}
+                aria-label="Truck mode"
               >
-                <QuillIcon /> Lyrics
+                <TruckIcon />
               </button>
               <button
                 type="button"
-                role="radio"
-                aria-checked={mode === "melody"}
-                disabled={busy && mode !== "melody"}
-                onClick={() => chooseMode("melody")}
+                className="icon-btn"
+                onClick={openTuner}
+                disabled={busy}
+                aria-label="Open guitar tuner"
               >
-                <NoteIcon /> Melody
+                <ForkIcon />
+              </button>
+              <button
+                type="button"
+                className="avatar-btn"
+                onClick={() => setShowCard(true)}
+                aria-label="Open birthday card"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="justin-sketch.jpg" alt="" />
               </button>
             </div>
+          </header>
 
-            {mode === "lyrics" ? (
-              <LyricsCapture key="lyrics" onSaved={upsert} onBusyChange={setBusy} />
-            ) : (
-              <MelodyCapture key="melody" onSaved={upsert} onDeleted={remove} onBusyChange={setBusy} />
-            )}
-          </>
-        ) : (
-          <Library takes={takes} loading={loading} onDelete={removeAndDelete} />
-        )}
-      </div>
+          {tab === "capture" ? (
+            <>
+              <div className="mode-switch" role="radiogroup" aria-label="What are you catching?">
+                <span className="pill" aria-hidden="true" />
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={mode === "lyrics"}
+                  disabled={busy && mode !== "lyrics"}
+                  onClick={() => chooseMode("lyrics")}
+                >
+                  <QuillIcon /> Lyrics
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={mode === "melody"}
+                  disabled={busy && mode !== "melody"}
+                  onClick={() => chooseMode("melody")}
+                >
+                  <NoteIcon /> Melody
+                </button>
+              </div>
 
-      <nav className="tabbar" role="tablist" aria-label="Sections">
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "capture"}
-          disabled={busy}
-          onClick={() => setTab("capture")}
-        >
-          <MicIcon size={18} /> Catch
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={tab === "takes"}
-          disabled={busy}
-          onClick={() => setTab("takes")}
-        >
-          <StackIcon /> Takes
-          {takes.length > 0 && <span className="count">{takes.length}</span>}
-        </button>
-      </nav>
+              {mode === "lyrics" ? (
+                <LyricsCapture key="lyrics" onSaved={upsert} onBusyChange={setBusy} />
+              ) : (
+                <MelodyCapture key="melody" onSaved={upsert} onDeleted={remove} onBusyChange={setBusy} />
+              )}
+            </>
+          ) : (
+            <Library takes={takes} loading={loading} onDelete={removeAndDelete} />
+          )}
+        </div>
 
-      {truck && <TruckMode onSaved={upsert} onExit={() => setTruckMode(false)} />}
+        <nav className="tabbar" role="tablist" aria-label="Sections">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "capture"}
+            disabled={busy}
+            onClick={() => setTab("capture")}
+          >
+            <MicIcon size={18} /> Catch
+          </button>
+          <button
+            type="button"
+            role="tab"
+            aria-selected={tab === "takes"}
+            disabled={busy}
+            onClick={() => setTab("takes")}
+          >
+            <StackIcon /> Takes
+            {takes.length > 0 && <span className="count">{takes.length}</span>}
+          </button>
+        </nav>
 
-      {tunerCtx && <Tuner ctx={tunerCtx} onClose={() => setTunerCtx(null)} />}
+        {truck && <TruckMode onSaved={upsert} onExit={() => setTruckMode(false)} />}
 
-      <BirthdayCard forceOpen={showCard} onClose={() => setShowCard(false)} />
-    </main>
+        {tunerCtx && <Tuner ctx={tunerCtx} onClose={() => setTunerCtx(null)} />}
+
+        <BirthdayCard forceOpen={showCard} onClose={() => setShowCard(false)} />
+      </main>
+    </RecipientProvider>
   );
 }

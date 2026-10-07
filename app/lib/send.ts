@@ -2,6 +2,7 @@
 // it to the iOS share sheet (Voice Memos, Messages, Files, AirDrop…).
 
 import type { Take } from "./db";
+import type { Recipient } from "./recipient";
 import { blobToBase64, extensionFor, timeAndDateLabels } from "./format";
 
 // Vercel caps request bodies at 4.5 MB; base64 inflates by 4/3.
@@ -12,7 +13,10 @@ export function fileNameFor(take: Take): string {
   return `${base}.${extensionFor(take.audio?.type ?? "")}`;
 }
 
-export async function emailTake(take: Take): Promise<string> {
+/** Thrown when the server no longer accepts the saved address. */
+export class RecipientRejected extends Error {}
+
+export async function emailTake(take: Take, to: Recipient): Promise<string> {
   if (take.audio && take.audio.size > MAX_EMAIL_AUDIO_BYTES) {
     throw new Error("That take is too long to email — use Share instead.");
   }
@@ -36,11 +40,14 @@ export async function emailTake(take: Take): Promise<string> {
       timeLabel,
       dateLabel,
       audio,
+      to: to.email,
+      toToken: to.token,
     }),
   });
-  const data: { ok?: boolean; subject?: string; error?: string } = await res
+  const data: { ok?: boolean; subject?: string; error?: string; needsRecipient?: boolean } = await res
     .json()
     .catch(() => ({}));
+  if (data.needsRecipient) throw new RecipientRejected(data.error ?? "Confirm your email address again.");
   if (!res.ok || !data.ok) throw new Error(data.error ?? "Couldn't send it. Try again.");
   return data.subject ?? "Sent";
 }

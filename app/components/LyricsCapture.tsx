@@ -6,9 +6,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { newId, saveTake, type Take } from "../lib/db";
-import { emailTake } from "../lib/send";
+import { emailTake, RecipientRejected } from "../lib/send";
 import { useDictation } from "../lib/useDictation";
 import RecordButton from "./RecordButton";
+import { useRecipient } from "./RecipientProvider";
 import { MailIcon, SaveIcon } from "./icons";
 
 const DRAFT_KEY = "catch:lyric-draft";
@@ -45,6 +46,7 @@ export default function LyricsCapture({
     setText((prev) => (prev.trim() ? `${prev.replace(/\s+$/, "")}\n${phrase}` : phrase));
   }, []);
   const dictation = useDictation(appendPhrase);
+  const recipients = useRecipient();
 
   useEffect(() => {
     const draft = readDraft();
@@ -96,16 +98,19 @@ export default function LyricsCapture({
 
   const email = async () => {
     dictation.stop();
+    const to = await recipients.ensure();
+    if (!to) return;
     const take = buildTake();
     setStatus({ kind: "busy", msg: "Sending…" });
     try {
-      const subject = await emailTake(take);
+      await emailTake(take, to);
       // Emailed lyrics are kept too — the inbox is a backup, not the library.
       await saveTake(take).catch(() => {});
       onSaved(take);
       clearSheet();
-      setStatus({ kind: "ok", msg: `Sent & saved — “${subject}”` });
+      setStatus({ kind: "ok", msg: `Sent to ${to.email} & saved.` });
     } catch (err) {
+      if (err instanceof RecipientRejected) recipients.forget();
       setStatus({ kind: "error", msg: (err as Error).message });
     }
   };
