@@ -3,6 +3,7 @@
 // His own little settings sheet, opened by tapping his face in the header.
 
 import { useEffect, useState } from "react";
+import { buildBackup, shareBackup } from "../lib/backup";
 import { getNightPref, setNightPref, type NightPref } from "../lib/useNight";
 import { useRecipient } from "./RecipientProvider";
 import { TruckIcon } from "./icons";
@@ -24,6 +25,29 @@ export default function Settings({
 }) {
   const [night, setNight] = useState<NightPref>("auto");
   const { recipient, change } = useRecipient();
+  const [backup, setBackup] = useState<{ busy: boolean; msg: string; error?: boolean }>({ busy: false, msg: "" });
+
+  const backUp = async () => {
+    setBackup({ busy: true, msg: "Packing up your takes…" });
+    try {
+      const { file, count, bytes } = await buildBackup();
+      if (!count) {
+        setBackup({ busy: false, msg: "Nothing to back up yet." });
+        return;
+      }
+      const size = bytes > 1e6 ? `${(bytes / 1e6).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1e3))} KB`;
+      const how = await shareBackup(file);
+      setBackup({
+        busy: false,
+        msg:
+          how === "cancelled"
+            ? "Backup cancelled."
+            : `${count} take${count === 1 ? "" : "s"} · ${size}. ${how === "shared" ? "Saved wherever you sent it." : "Downloaded."}`,
+      });
+    } catch {
+      setBackup({ busy: false, msg: "Couldn't make the backup. Try again.", error: true });
+    }
+  };
 
   useEffect(() => {
     // Saved on the phone, so read after mount.
@@ -88,6 +112,22 @@ export default function Settings({
           <button type="button" className="chip-btn primary wide" onClick={onTruck}>
             <TruckIcon size={20} /> Get in the truck
           </button>
+        </section>
+
+        <section>
+          <h3>Back up everything</h3>
+          <p>
+            Your takes live on this phone. This bundles them all — melodies as audio, lyrics as text — into
+            one file. Tap <b>Save to Files</b> and pick iCloud Drive.
+          </p>
+          <button type="button" className="chip-btn wide" onClick={backUp} disabled={backup.busy}>
+            {backup.busy ? "Packing…" : "Back up everything"}
+          </button>
+          {backup.msg && (
+            <p className={`backup-msg${backup.error ? " error" : ""}`} role="status">
+              {backup.msg}
+            </p>
+          )}
         </section>
 
         <section>

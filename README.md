@@ -30,8 +30,14 @@ truck**. It keeps the screen awake, and takes land in Takes titled like
 warm — after 10pm by default, or always/never.
 
 **Tap his face** (top right) for his settings: shed hours (after 10pm /
-always / never), where emailed takes go, a button into truck mode, and
-Devin's birthday note again.
+always / never), where emailed takes go, a button into truck mode, **Back up
+everything**, and Devin's birthday note again.
+
+**Back up everything** bundles every take into one `.zip` — melodies as audio
+files, lyrics as `.txt`, chord notes alongside, plus a `takes.json` index —
+and opens the share sheet so it can go to iCloud Drive via *Save to Files*.
+Takes otherwise live only on the phone (IndexedDB): deleting the home-screen
+icon or clearing Safari's website data erases them.
 
 Everything lands in **Takes**, stored on the device (IndexedDB). Any take can be
 **emailed** (melodies go as an audio attachment) or sent through the iOS

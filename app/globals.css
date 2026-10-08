@@ -1909,6 +1909,20 @@ textarea.field {
   white-space: nowrap;
 }
 
+.settings p b {
+  color: var(--cream);
+  font-weight: 500;
+}
+
+.settings .backup-msg {
+  margin: 0;
+  color: var(--tan);
+}
+
+.settings .backup-msg.error {
+  color: var(--danger);
+}
+
 .chip-btn.wide {
   width: 100%;
   justify-content: center;
