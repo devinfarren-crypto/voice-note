@@ -141,7 +141,8 @@ function EmailSetup({ current, onDone }: { current: string; onDone: (r: Recipien
             }}
           >
             <p>
-              Check <b>{pending.email}</b> for a 6-digit code.
+              Check <b>{pending.email}</b> for a 6-digit code. The first one can land in spam — if it
+              does, mark it <b>Not spam</b> so your takes come straight to your inbox.
             </p>
             <input
               className="field code"
