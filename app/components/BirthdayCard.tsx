@@ -41,8 +41,11 @@ export default function BirthdayCard({ forceOpen, onClose }: { forceOpen: boolea
           <figcaption>Happy Birthday J!!</figcaption>
         </figure>
         <h2 id="gift-title">You don&apos;t need this,</h2>
-        <p>but it&apos;s here if you do.</p>
-        <div className="sig">Love you man, {FROM}</div>
+        <p>but it&apos;s here if you do!</p>
+        <div className="sig">
+          <span className="sig-note">Love you man, I&apos;m proud to be your brother. Enjoy the day!</span>
+          <span className="sig-name">{FROM}</span>
+        </div>
         <button type="button" onClick={close}>
           Catch
         </button>

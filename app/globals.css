@@ -1146,11 +1146,27 @@ textarea.field {
 }
 
 .gift-card .sig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
   font-family: var(--script);
+  color: var(--paper-ink);
+  margin: 6px 0 16px;
+}
+
+/* Sacramento is a hairline script; a touch of stroke keeps the longer note
+   readable at this size. */
+.gift-card .sig-note {
+  font-size: 30px;
+  line-height: 1.12;
+  -webkit-text-stroke: 0.3px var(--paper-ink);
+  text-wrap: balance;
+}
+
+.gift-card .sig-name {
   font-size: 40px;
   line-height: 1.1;
-  color: var(--paper-ink);
-  margin: 0 0 16px;
 }
 
 .gift-card button {
